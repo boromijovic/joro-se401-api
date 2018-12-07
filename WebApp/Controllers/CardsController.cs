@@ -27,7 +27,9 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var cards = _context.Cards.Include(x => x.Patient).ToList();
+            var cards = _context.Cards.Include(x => x.Patient)
+                .Include(x => x.Therapies)
+                    .ToList();
             return Ok(new { cards = cards });
         }
 
@@ -50,7 +52,10 @@ namespace WebApp.Controllers
         {
             if (CheckIfExists(patientId))
             {
-                Card card = _context.Cards.Where(x => x.Patient.Id == patientId).Include(x => x.Patient).FirstOrDefault();
+                Card card = _context.Cards.Where(x => x.Patient.Id == patientId)
+                    .Include(x => x.Patient)
+                    .Include(x => x.Therapies)
+                    .FirstOrDefault();
 
                 return Ok(new { card });
             }
@@ -70,7 +75,40 @@ namespace WebApp.Controllers
             } else
                 return BadRequest();
         }
-      
+
+        // POST: therapy
+        [HttpPost("patient/{patientId}/add-therapy")]
+        public IActionResult AddTherapyToPatient([FromRoute] int patientId, [FromBody] TherapyCommand therapyCommand)
+        {
+            if (therapyCommand != null)
+            {
+
+                Card card = _context.Cards.Where(x => x.Patient.Id == patientId).FirstOrDefault();
+
+                if (card != null)
+                {
+                    Therapy t = new Therapy
+                    {
+                        Description = therapyCommand.Description,
+                        Symptoms = therapyCommand.Symptoms,
+                        Comments = therapyCommand.Comments,
+                        DataOfExam = therapyCommand.DataOfExam
+                    };
+
+                    card.Therapies = new List<Therapy>
+                    {
+                        t
+                    };
+
+                    _context.SaveChanges();
+                    return Ok(new { message = "Succesfully added therapy to patient" });
+                }else
+                    return BadRequest();
+            }
+            else
+                return BadRequest();
+        }
+
         private bool CheckIfExists(int id)
         {
             if (_context.Cards.Any(o => o.CardId == id))

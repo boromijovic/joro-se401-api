@@ -13,9 +13,9 @@ namespace WebApp.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CardId { get; set; }
         public Patient Patient { get; set; }
-        public List<Allergen> Allergens { get; set; }
-        public List<Therapy> Therapies { get; set; }
-        public List<Prescription> Prescriptions { get; set; }
-        public List<Refferal> Refferals { get; set; }
+        public virtual List<Allergen> Allergens { get; set; }
+        public virtual ICollection<Therapy> Therapies { get; set; }
+        public virtual List<Prescription> Prescriptions { get; set; }
+        public virtual List<Refferal> Refferals { get; set; }
     }
 }
