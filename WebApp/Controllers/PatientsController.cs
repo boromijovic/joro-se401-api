@@ -61,7 +61,7 @@ namespace WebApp.Controllers
                     Allergens = new List<Allergen>(),
                     Prescriptions = new List<Prescription>(),
                     Refferals = new List<Refferal>(),
-                    Therapies = new List<Therapy>(5)
+                    Therapies = new List<Therapy>()
                 };
 
                 _context.Cards.Add(card);

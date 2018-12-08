@@ -29,6 +29,8 @@ namespace WebApp.Controllers
         {
             var cards = _context.Cards.Include(x => x.Patient)
                 .Include(x => x.Therapies)
+                .Include(x => x.Prescriptions)
+                .Include(x => x.Refferals)
                     .ToList();
             return Ok(new { cards = cards });
         }
@@ -103,6 +105,77 @@ namespace WebApp.Controllers
                     _context.SaveChanges();
                     return Ok(new { message = "Succesfully added therapy to patient" });
                 }else
+                    return BadRequest(new { message = "CARD NULL" });
+            }
+            else
+                return BadRequest(new { message = "COMMAND EMPTY" });
+        }
+
+        // POST: therapy
+        [HttpPost("patient/{patientId}/add-prescription")]
+        public IActionResult AddPrescriptionToPatient([FromRoute] int patientId, [FromBody] PrescriptionCommand prescriptionCommand)
+        {
+            if (prescriptionCommand != null)
+            {
+
+                Card card = _context.Cards.Where(x => x.Patient.Id == patientId).FirstOrDefault();
+
+                if (card != null)
+                {
+                    Prescription p = new Prescription
+                    {
+                        DescriptionOfUse = prescriptionCommand.DescriptionOfUse,
+                        DrugName = prescriptionCommand.DrugName,
+                        DoctorName = prescriptionCommand.DrugName,
+                        Note = prescriptionCommand.Note,
+                        DataOfExpiry = prescriptionCommand.DataOfExpiry
+                    };
+
+                    card.Prescriptions = new List<Prescription>
+                    {
+                        p
+                    };
+
+                    _context.SaveChanges();
+                    return Ok(new { message = "Succesfully added prescription to patient" });
+                }
+                else
+                    return BadRequest();
+            }
+            else
+                return BadRequest();
+        }
+
+        // POST: therapy
+        [HttpPost("patient/{patientId}/add-refferal")]
+        public IActionResult AddRefferalToPatient([FromRoute] int patientId, [FromBody] RefferalCommand refferalCommand)
+        {
+            if (refferalCommand != null)
+            {
+
+                Card card = _context.Cards.Where(x => x.Patient.Id == patientId).FirstOrDefault();
+
+                if (card != null)
+                {
+                    Refferal r = new Refferal
+                    {
+                        PatientId = patientId,
+                        DescriptionOfProblem = refferalCommand.DescriptionOfProblem,
+                        DoctorName = refferalCommand.DoctorName,
+                        Note = refferalCommand.Note,
+                        RefferingMD = refferalCommand.RefferingMD,
+                        Date = refferalCommand.Date,
+                    };
+
+                    card.Refferals = new List<Refferal>
+                    {
+                        r
+                    };
+
+                    _context.SaveChanges();
+                    return Ok(new { message = "Succesfully added refferal to patient" });
+                }
+                else
                     return BadRequest();
             }
             else

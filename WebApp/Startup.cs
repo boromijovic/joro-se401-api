@@ -30,7 +30,10 @@ namespace WebApp
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder.WithOrigins("*"));
+                    builder => builder.WithOrigins("*")
+                    .WithMethods("*")
+                    .WithHeaders("*")
+                    );
             });
             services.AddMvc()
                 .AddJsonOptions(
