@@ -18,6 +18,8 @@ namespace WebApp.Data
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<Refferal> Refferals { get; set; }
         public DbSet<Allergen> Allergens { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Card>()
@@ -39,6 +41,10 @@ namespace WebApp.Data
             modelBuilder.Entity<Card>()
               .HasMany(b => b.Allergens)
                   .WithOne();
+
+            modelBuilder.Entity<Employee>()
+            .HasMany(b => b.UserAccounts)
+                .WithOne();
         }
     }
 }
